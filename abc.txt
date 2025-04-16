@@ -1,100 +1,285 @@
-#include <stdio.h>
+#include<stdio.h>
 
-// Function to implement First Come First Serve (FCFS) scheduling
+//#include<conio.h>
 
-void FCFS (int bt[], int n)
 
- {
+#define INFINITY 9999
 
-    int wt[n], tat[n], total_wt = 0, total_tat = 0;
 
-   // First process has zero waiting time
+#define MAX 50
 
-    wt[0] = 0;
 
-    // Calculate waiting time for each process
 
-    for (int i = 1; i < n; i++) {
 
-        wt[i] = wt[i - 1] + bt[i - 1];
+void dijkstra(int G[MAX][MAX], int n, int startnode);
 
-        total_wt += wt[i];
+
+
+
+int main() {
+
+
+    int G[MAX][MAX], i, j, n, u, flag = 0;
+
+
+
+
+    printf("Graph: Shortest Path to Other Vertices: Dijkstra Algorithm >>\n\n");
+
+
+    printf("Enter Number of Vertices Present in the Graph: ");
+
+
+    scanf("%d", &n);
+
+
+
+
+    printf("\nEnter the Adjacency Matrix:\n");
+
+
+    for (i = 0; i < n; i++)
+
+
+        for (j = 0; j < n; j++)
+
+
+            scanf("%d", &G[i][j]);
+
+
+
+
+    printf("\nEnter The Starting Node: ");
+
+
+    scanf("%d", &u);
+
+
+
+
+    printf("\nSo, The Adjacency Matrix is:\n");
+
+
+    for (i = 0; i < n; i++) {
+
+
+        for (j = 0; j < n; j++) {
+
+
+            printf("%d ", G[i][j]);
+
+
+        }
+
+
+        printf("\n");
+
 
     }
 
- // Calculate turnaround time for each process
 
-    for (int i = 0; i < n; i++) 
 
-{
 
-   Tat [i] = wt[i] + bt[i];
+    dijkstra(G, n, u);
 
-        total_tat += tat[i];
 
-    }
 
- // Calculate average waiting and turnaround times
 
-    float avg_wt = (float)total_wt / n;
+    do {
 
-    float avg_tat = (float)total_tat / n;
 
-    // Display process details
+        printf("\nWant to Continue…. 1 for Yes, 0 for No : ");
 
-    Printf ("\nProcess\tBurst Time\tWaiting Time\tTurnaround Time\n");
 
-    Printf ("-------------------------------------------------\n");
+        scanf("%d", &flag);
 
-    for (int i = 0; i < n; i++)
 
- {
+        if (flag == 1) {
 
-        Printf ("%d\t%d\t\t%d\t\t%d\n", i + 1, bt[i], wt[i], tat[i]);
 
-    }
+            printf("\n\nEnter The Starting Node: ");
 
-    Printf ("\nAverage Waiting Time: %.2f\n", avg_wt);
 
-    Printf ("Average Turnaround Time: %.2f\n", avg_tat);
+            scanf("%d", &u);
+
+
+            dijkstra(G, n, u);
+
+
+        }
+
+
+    } while (flag == 1);
+
+
+
+
+    return 0;
+
 
 }
 
 
 
-int main () 
 
-{
+void dijkstra(int G[MAX][MAX], int n, int startnode) {
 
-    int n;
 
-    // Input number of processes
+    int cost[MAX][MAX], distance[MAX], pred[MAX];
 
-    Printf ("Enter the number of processes: ");
 
-    Scanf ("%d", &n);
+    int visited[MAX], count, mindistance, nextnode, i, j;
 
-    int bt [n];
 
-    // Input burst time for each process
 
-    printf("Enter Burst Time for each process:\n");
 
-    for (int i = 0; i < n; i++) 
+    for (i = 0; i < n; i++)
 
-{
 
-  Printf ("Process %d Burst Time: ", i + 1);
+        for (j = 0; j < n; j++)
 
-        Scanf ("%d", &bt[i]);
+
+            if (G[i][j] == 0)
+
+
+                cost[i][j] = INFINITY;
+
+
+            else
+
+
+                cost[i][j] = G[i][j];
+
+
+
+
+    for (i = 0; i < n; i++) {
+
+
+        distance[i] = cost[startnode][i];
+
+
+        pred[i] = startnode;
+
+
+        visited[i] = 0;
+
 
     }
 
-    // Call FCFS scheduling function 
 
-    FCFS (bt, n);
 
-    return 0;
+
+    distance[startnode] = 0;
+
+
+    visited[startnode] = 1;
+
+
+    count = 1;
+
+
+
+
+    while (count < n - 1) {
+
+
+        mindistance = INFINITY;
+
+
+        for (i = 0; i < n; i++)
+
+
+            if (distance[i] < mindistance && !visited[i]) {
+
+
+                mindistance = distance[i];
+
+
+                nextnode = i;
+
+
+            }
+
+
+
+
+        visited[nextnode] = 1;
+
+
+        for (i = 0; i < n; i++)
+
+
+            if (!visited[i])
+
+
+                if (mindistance + cost[nextnode][i] < distance[i]) {
+
+
+                    distance[i] = mindistance + cost[nextnode][i];
+
+
+                    pred[i] = nextnode;
+
+
+                }
+
+
+        count++;
+
+
+    }
+
+
+
+
+    for (i = 0; i < n; i++) {
+
+
+        if (i != startnode) {
+
+
+            if (distance[i] == 9999) {
+
+
+                printf("\nThere is no Possible Path Between %d and %d.", i, startnode);
+
+
+            } else {
+
+
+                printf("\nDistance of Node %d to %d is: %d", i, startnode, distance[i]);
+
+
+                printf("\nAnd the Path is: %d ", i);
+
+
+                j = i;
+
+
+                do {
+
+
+                    j = pred[j];
+
+
+                    printf(" -> %d", j);
+
+
+                } while (j != startnode);
+
+
+            }
+
+
+        }
+
+
+        printf("\n");
+
+
+    }
+
 
 }
 
